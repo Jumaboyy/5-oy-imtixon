@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="../css/output.css">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-10 rounded-2xl shadow-lg w-full max-w-sm">
+        <h1 class="text-2xl font-bold text-center mb-6">Ro'yxatdan o'tish</h1>
+        
+        <form id="registerForm" class="flex flex-col gap-4">
+            <input 
+                type="text" 
+                name="username" 
+                placeholder="Ismingizni kiriting" 
+                class="input input-bordered w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input 
+                type="password" 
+                name="password" 
+                placeholder="Maxfiy so'zni kiriting" 
+                class="input input-bordered w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input 
+                type="password" 
+                name="confirmPassword" 
+                placeholder="Maxfiy so'zni tasdiqlang" 
+                class="input input-bordered w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button 
+                type="submit" 
+                class="btn btn-primary w-full rounded-lg mt-2"
+            >
+                Ro'yxatdan o'tish
+            </button>
+        </form>
+
+        <p class="text-center text-sm text-gray-500 mt-4">
+            Sizda account bor? 
+            <a href="login.html" class="text-blue-500 hover:underline">Login sahifaga o'tish</a>
+        </p>
+    </div>
+</body>
+</html>
