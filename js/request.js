@@ -4,8 +4,6 @@ export async function getAll(query = "") {
   try {
     const req = await fetch(baseURL + `/cars${query ? query : ""}`);
     const res = await req.json();
-    console.log(res);
-    
     return res;
   } catch {
     throw new Error("Ma'lumotlarni olishda xatolik bo'ldi!");

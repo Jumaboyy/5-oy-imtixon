@@ -1,13 +1,28 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="css/output.css">
-
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body>
+    <img
+      id="cursor"
+      class="pointer-events-none select-none absolute !z-[999] -translate-x-2/4 -translate-y-2/4"
+      src="./images/cursor (1).png"
+      alt=""
+      aria-hidden="true"
+      width="32"
+      height="32"
+    />
+
     <!-- Internet yo'qligida chiqadigan biror narsa -->
 
     <div class="fixed inset-0 bg-accent flex items-center" id="offlinePage">
@@ -20,29 +35,12 @@
       </div>
     </div>
 
-    <!-- loader -->
-   <div id="loadingScreen" class="fixed inset-0 flex items-center justify-center bg-white z-50">
-    <div class="text-center">
-      <div class="loader border-4 border-blue-500 border-t-transparent rounded-full w-16 h-16 animate-spin"></div>
-      <p class="mt-4 text-gray-700 font-medium">Sayt yuklanmoqda...</p>
-    </div>
-  </div>
-
-<style>
-    .loader {
-        border-top-color: transparent;
-        border-right-color: blue;
-        border-bottom-color: blue;
-        border-left-color: blue;
-    }
-</style>
     <!-- Filter -->
 
     <section class="py-10">
   <div class="container mx-auto px-5 flex flex-col items-center">
-    
-    <!-- Filter -->
-    <div class="flex flex-col md:flex-row items-center gap-5 pb-5 w-full md:w-auto">
+    <!-- Filter va Search -->
+    <div class="flex flex-col md:flex-row items-center gap-5 pb-5 justify-center">
       <select class="select select-primary" id="filterTypeSelect">
         <option disabled selected>
           Nima bo'yicha filter qilmoqchisiz?
@@ -57,7 +55,7 @@
         <option disabled selected>All</option>
       </select>
 
-      <label class="input flex items-center gap-2 w-full md:w-auto">
+      <label class="input flex items-center gap-2">
         <svg
           class="h-[1em] opacity-50"
           xmlns="http://www.w3.org/2000/svg"
@@ -83,12 +81,11 @@
       </label>
     </div>
 
-    <!-- Card container -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 justify-center" id="container"></div>
+    <!-- Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 justify-items-center" id="container"></div>
 
     <!-- Pagination -->
-    <div class="join mb-5 pt-5" id="pagination"></div>
-
+    <div class="join mb-5 pt-[20px]" id="pagination"></div>
   </div>
 </section>
 
@@ -128,15 +125,6 @@
         <div class="card-body">
           <h2 class="card-title"></h2>
           <p></p>
-          <h2 class="card-trim"></h2>
-          <h2 class="card-year"></h2>
-          <h2 class="card-maxSpeed"></h2>
-          <h2 class="card-engine"></h2>
-          <h2 class="card-horsepower"></h2>
-          <h2 class="card-fuelType"></h2>
-          <h2 class="card-country"></h2>
-
-
           <div class="justify-end card-actions">
             <button class="btn btn-error js-delete">
               <svg
