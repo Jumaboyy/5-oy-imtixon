@@ -1,4 +1,3 @@
-
 function fiterByType(data, type) {
   const types = data.map((el) => el[type]);
   const result = Array.from(new Set(types));

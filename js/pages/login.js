@@ -1,5 +1,3 @@
-import { getFormData } from "../get-form-data.js";
-
 const elForm = document.getElementById("form");
 
 async function login(user) {
@@ -20,7 +18,11 @@ async function login(user) {
 
 elForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  const result = getFormData(elForm);
+  const formData = new FormData(elForm);
+  const result = {};
+  formData.forEach((value, key) => {
+    result[key] = value;
+  });
   login(result)
     .then((res) => {
       localStorage.setItem("token", res.access_token);

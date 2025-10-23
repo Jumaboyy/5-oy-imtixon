@@ -27,6 +27,7 @@ export async function addElement(newData) {
     throw new Error("Ma'lumotni qo'shishda xatolik bo'ldi!");
   }
 }
+
 export async function editElement(editedData) {
   try {
     const token = localStorage.getItem("token");
@@ -44,6 +45,7 @@ export async function editElement(editedData) {
     throw new Error("Ma'lumotni tahrirlashda xatolik bo'ldi!");
   }
 }
+
 export async function deleteElement(id) {
   try {
     const token = localStorage.getItem("token");

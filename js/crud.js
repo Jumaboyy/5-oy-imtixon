@@ -1,4 +1,4 @@
-import { changeLocaleData, localData } from "./local-data.js";
+import { changeLocaleData, localData } from "./localData.js";
 
 export function deleteElementLocal(id) {
   const result = localData.filter((el) => el.id != id);

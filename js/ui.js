@@ -1,13 +1,18 @@
 export function ui(data) {
   const elContainer = document.getElementById("container");
-  elContainer.innerHTML = "";
+  elContainer.innerHTML = null;
   data.forEach((el) => {
     const clone = document
       .getElementById("cardTemplate")
       .cloneNode(true).content;
 
     const elTitle = clone.querySelector("h2");
-    const elDescription = clone.querySelector("p");
+    const elDescription = clone.querySelector("#description");
+    const elCountry = clone.querySelector("#country");
+    const elCategory = clone.querySelector("#category");
+    const elYear = clone.querySelector("#year");
+    const elColorName = clone.querySelector("#colorName");
+    const elMaxSpeed = clone.querySelector("#maxSpeed");
     const elInfoBtn = clone.querySelector(".js-info");
     const elEditBtn = clone.querySelector(".js-edit");
     const elDeleteBtn = clone.querySelector(".js-delete");
@@ -16,8 +21,13 @@ export function ui(data) {
     elEditBtn.id = el.id;
     elInfoBtn.href = `/pages/details.html?id=${el.id}`;
 
-    elTitle.innerText = el.name;
-    elDescription.innerText = el.description;
+    elTitle.innerHTML = `<strong>${el.name}</strong> `;
+    elDescription.innerHTML = `${el.description}`;
+    elCategory.innerHTML = `<strong>Turkum:</strong> ${el.category}`;
+    elCountry.innerHTML = `<strong>Davlat:</strong> ${el.country}`;
+    elYear.innerHTML = `<strong>Yili:</strong> ${el.year}`;
+    elMaxSpeed.innerHTML = `<strong>Max Tezligi:</strong> ${el.maxSpeed}`;
+    elColorName.innerHTML = `<strong>Rang: </strong> ${el.colorName}`;
 
     elContainer.appendChild(clone);
   });
@@ -38,7 +48,6 @@ export function pagination(total, limit, skip) {
       "js-page",
       activePage === i ? "btn-active" : null
     );
-
     button.innerText = i;
     button.dataset.skip = limit * i - limit;
 
