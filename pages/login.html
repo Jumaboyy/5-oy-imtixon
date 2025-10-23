@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-  </head>
-  <body>
-    <h1>Login sahifasi</h1>
+    <link rel="stylesheet" href="../css/output.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="login-body">
+    <div id="toast" class="tooast">
+        <ul id="toastContainer" class="toast-container">
+        </ul>
+    </div>
+
+    <h1>Hisobga kirish</h1>
+
     <form id="form">
-      <input type="text" name="username" placeholder="Ismingizni kiriting" />
-      <input
-        type="password"
-        name="password"
-        placeholder="Maxfiy so'zni kiriting" />
-      <button>Tasdiqlash</button>
+        <input type="text" name="username" placeholder="username'ingizni kiriting:">
+        <input type="password" name="password" placeholder="parolingizni kiriting:">
+        <button>Kirish</button>
+        <a class="allaqachon" href="../pages/register.html">Ro'yhatdan o'tish</a>
     </form>
-    <script src="../js/pages/login.js" type="module"></script>
-  </body>
+    
+    <script type="module" src="../js/pages/login.js"></script>
+</body>
 </html>

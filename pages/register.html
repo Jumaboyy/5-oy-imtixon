@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-  </head>
-  <body>
+    <link rel="stylesheet" href="../css/output.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="login-body">
+    <div id="toast" class="tooast">
+        <ul id="toastContainer" class="toast-container">
+        </ul>
+    </div>
+
+    <h1 class="registerh1">Ro'yhatdan o'tish</h1>
+
+    <form id="form">
+        <input type="text" name="username" placeholder="username o'ylab roping:">
+        <input type="password" name="password" placeholder="parol o'ylab toping:">
+        <button>Ro'yhatdan o'tish</button>
+        <a href="../pages/login.html" class="allaqachon">login qilish.</a>
+    </form>
+    
     <script type="module" src="../js/pages/register.js"></script>
-  </body>
+</body>
 </html>

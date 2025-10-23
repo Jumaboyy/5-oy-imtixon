@@ -1,199 +1,272 @@
 import { checkAuth } from "./check-auth.js";
 import { deleteElementLocal, editElementLocal } from "./crud.js";
-import { changeLocaleData, localData } from "./localData.js";
-import { deleteElement, editElement, getAll } from "./request.js";
+import { changeLocalData, localData } from "./local-data.js";
+import { addElement, deleteElement, editedElement, getAll } from "./request.js";
+import { createToast, deleteToast } from "./toast.js";
 import { pagination, ui } from "./ui.js";
 
-const limit = 12;
+let backendDataCache = null;
+let workerThread = new Worker("./worker.js");
+let editedItemId = null;
+let deleteItemId = null;
+let currentFilterKey = null;
+let currentFilterValue = null;
+
+const elOfflineBanner = document.getElementById("networkError");
+const elSearchField = document.getElementById("searchInput");
+const elLoader = document.getElementById("loader");
+const elItemsContainer = document.getElementById("carContainer");
+const elAddBtn = document.getElementById("addButton");
+const elFilterType = document.getElementById("filterTypeSelect");
+const elFilterValue = document.getElementById("filterValueSelect");
+const elPaginationWrapper = document.getElementById("pagination");
+const elNoDataBlock = document.getElementById("noData");
+const elNoDataText = document.getElementById("noDataInfo");
+const elModal = document.getElementById("editModal");
+const elAnswerModal = document.getElementById("answerModal");
+const elEditForm = document.getElementById("editForm");
+
+let limit = 12;
 let skip = 0;
 
-const elEditModal = document.getElementById("editModal");
-const elEditedForm = document.getElementById("editForm");
-const elContainer = document.getElementById("container");
-const elOfflinePage = document.getElementById("offlinePage");
-const elFilterTypeSelect = document.getElementById("filterTypeSelect");
-const elFilterValueSelect = document.getElementById("filterValueSelect");
-const elSearchInput = document.getElementById("searchInput");
-const elLoading = document.getElementById("loading");
-const elFilterSearch = document.getElementById("filterSearch");
-const elPagination = document.getElementById("pagination");
-
-let backendData = null;
-let worker = new Worker("./worker.js");
-let filterKey = null;
-let filterValue = null;
-let editedElementId = null;
+// Event Listeners 
 
 window.addEventListener("DOMContentLoaded", () => {
-  if (window.navigator.onLine === false) {
-    elOfflinePage.classList.remove("hidden");
-  } else {
-    elOfflinePage.classList.add("hidden");
-  }
+    if (!navigator.onLine) {
+        elOfflineBanner.classList.remove("hidden");
+        elOfflineBanner.classList.add("flex");
+    } else {
+        elOfflineBanner.classList.add("hidden");
+        elOfflineBanner.classList.remove("flex");
+    }
 
-  getAll(`?limit=${limit}&skip=${skip}`)
-    .then((res) => {
-      elFilterSearch.classList.remove("flex");
-      elFilterSearch.classList.add("hidden");
-      backendData = res;
-      pagination(backendData.total, backendData.limit, backendData.skip);
-      changeLocaleData(backendData.data);
-    })
-    .catch((error) => {
-      alert(error.message);
-    })
-    .finally(() => {
-      elLoading.classList.add("hidden");
-      elFilterSearch.classList.add("flex");
-      elFilterSearch.classList.remove("hidden");
+    elLoader.classList.remove("hidden");
+    elLoader.classList.add("grid");
+
+    getAll().then((res) => {
+        backendDataCache = res;
+    }).catch(console.log);
+
+    createToast("loading", "Ma'lumotlar kutilmoqda");
+
+    getAll(`?limit=${limit}&skip=${skip}`).then((res) => {
+        pagination(res.total, res.limit, res.skip);
+        changeLocalData(res.data);
+        createToast("true", "muvaffaqiyatli keldi");
+    }).catch((err) => {
+        elNoDataBlock.classList.remove("hidden");
+        elNoDataBlock.classList.add("no-data");
+        elNoDataText.innerText = "Ma'lumotlar mavjud emas";
+        elPaginationWrapper.classList.add("hidden");
+        createToast("error", "Ma'lumotlarni olishda xatolik bo'ldi!");
+    }).finally(() => {
+        elLoader.classList.add("hidden");
+        elLoader.classList.remove("grid");
     });
 });
 
+// Filter by type
+elFilterType.addEventListener("change", (evt) => {
+    const value = evt.target.value;
+    currentFilterKey = value;
+
+    workerThread.postMessage({
+        functionName: "filterByType",
+        params: [backendDataCache.data, value],
+    });
+});
+
+// Filter by value
+elFilterValue.addEventListener("change", (evt) => {
+    const val = evt.target.value;
+    currentFilterValue = val;
+    elItemsContainer.innerHTML = "";
+
+    if (currentFilterKey && currentFilterValue) {
+        elLoader.classList.remove("hidden");
+        elLoader.classList.add("grid");
+
+        getAll(`?${currentFilterKey}=${currentFilterValue}`).then((res) => {
+            ui(res.data);
+        }).catch((err) => alert(err.message))
+        .finally(() => {
+            elLoader.classList.add("hidden");
+            elLoader.classList.remove("grid");
+        });
+    }
+});
+
+// Search input
+elSearchField.addEventListener("input", (evt) => {
+    const key = evt.target.value;
+    workerThread.postMessage({
+        functionName: "search",
+        params: [backendDataCache.data, key],
+    });
+});
+
+// Worker listener
+workerThread.addEventListener("message", (evt) => {
+    const data = evt.data;
+    if (data.target === "filterByType") {
+        elFilterValue.innerHTML = "";
+        const option = document.createElement("option");
+        option.selected = true;
+        option.disabled = true;
+        option.textContent = "Hammasi";
+        elFilterValue.appendChild(option);
+
+        data.result.forEach((el) => {
+            const opt = document.createElement("option");
+            opt.textContent = el;
+            opt.value = el;
+            elFilterValue.appendChild(opt);
+        });
+    } else if (data.target === "search") {
+        elItemsContainer.innerHTML = "";
+        if (data.result.length > 0) {
+            elNoDataBlock.classList.add("hidden");
+            elNoDataBlock.classList.remove("no-data");
+            elPaginationWrapper.classList.remove("hidden");
+            elNoDataText.innerText = "";
+            ui(data.result);
+        } else {
+            elNoDataBlock.classList.remove("hidden");
+            elNoDataBlock.classList.add("no-data");
+            elPaginationWrapper.classList.add("hidden");
+            elNoDataText.innerText = "Bunday mashina mavjud emas";
+        }
+    }
+});
+
+// Online/offline
 window.addEventListener("online", () => {
-  elOfflinePage.classList.add("hidden");
-  elOfflinePage.classList.remove("z-10");
+    elOfflineBanner.classList.add("hidden");
+    elOfflineBanner.classList.remove("flex");
 });
 
 window.addEventListener("offline", () => {
-  elOfflinePage.classList.remove("hidden");
-  elOfflinePage.classList.add("z-10");
+    elOfflineBanner.classList.remove("hidden");
+    elOfflineBanner.classList.add("flex");
 });
 
-elFilterTypeSelect.addEventListener("change", (evt) => {
-  const value = evt.target[evt.target.selectedIndex].value;
-  filterKey = value;
-  worker.postMessage({
-    functionName: "fiterByType",
-    params: [backendData.data, value],
-  });
-});
-
-elFilterValueSelect.addEventListener("change", (evt) => {
-  const value = evt.target[evt.target.selectedIndex].value;
-  filterValue = value;
-  const elContainer = document.getElementById("container");
-  elContainer.innerHTML = null;
-  if (filterValue && filterKey) {
-    getAll(`?${filterKey}=${filterValue}`)
-      .then((res) => {
-        ui(res.data);
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  }
-});
-
-elSearchInput.addEventListener("input", (evt) => {
-  const key = evt.target.value;
-  worker.postMessage({
-    functionName: "search",
-    params: [backendData.data, key],
-  });
-});
-
-worker.addEventListener("message", (evt) => {
-  // Select
-  const response = evt.data;
-  if (response.target === "fiterByType") {
-    elFilterValueSelect.classList.remove("hidden");
-    elFilterValueSelect.innerHTML = "";
-    const option = document.createElement("option");
-    option.selected = true;
-    option.disabled = true;
-    option.textContent = "All";
-    elFilterValueSelect.appendChild(option);
-    response.result.forEach((el) => {
-      const option = document.createElement("option");
-      option.value = el;
-      option.textContent = el;
-      elFilterValueSelect.appendChild(option);
-    });
-  } else if (response.target === "search") {
-    const elContainer = document.getElementById("container");
-    elContainer.innerHTML = null;
-
-    if (response.result.length > 0) {
-      ui(response.result);
-    } else {
-      alert("No data");
+// Delete car
+elItemsContainer.addEventListener("click", (evt) => {
+    const target = evt.target;
+    if (target.classList.contains("js-delete")) {
+        if (checkAuth()) {
+            elItemsContainer.classList.add("hidden");
+            elPaginationWrapper.classList.add("hidden");
+            elItemsContainer.classList.remove("grid");
+            elAnswerModal.classList.remove("hidden");
+            elAnswerModal.classList.add("answer-modal");
+            deleteItemId = target.id;
+        } else {
+            createToast("error", "Ro'yhatdan o'tishingiz kerak!");
+            setTimeout(() => window.location.href = "/pages/register.html", 2000);
+        }
     }
-  }
 });
 
-// crud
+// Answer modal
+elAnswerModal.addEventListener("click", (evt) => {
+    const target = evt.target;
+    if (target.classList.contains("js-xa")) {
+        elItemsContainer.classList.remove("hidden");
+        elPaginationWrapper.classList.remove("hidden");
+        elItemsContainer.classList.add("grid");
+        elAnswerModal.classList.add("hidden");
+        elAnswerModal.classList.remove("answer-modal");
 
-elContainer.addEventListener("click", (evt) => {
-  const target = evt.target;
+        createToast("loading", "Ma'lumot o'chirilmoqda");
+        deleteElement(deleteItemId).then((id) => {
+            deleteToast();
+            deleteElementLocal(id);
+            createToast("true", "Ma'lumot muvaffaqiyatli o'chirildi");
+        }).catch((err) => createToast("error", err.message))
+        .finally(() => deleteItemId = null);
+    } else if (target.classList.contains("js-yoq")) {
+        elItemsContainer.classList.remove("hidden");
+        elPaginationWrapper.classList.remove("hidden");
+        elItemsContainer.classList.add("grid");
+        elAnswerModal.classList.add("hidden");
+        elAnswerModal.classList.remove("answer-modal");
+        deleteItemId = null;
+    }
+});
 
-  // Edit
-
-  if (target.classList.contains("js-edit")) {
+// Add modal
+elAddBtn.addEventListener("click", () => {
     if (checkAuth()) {
-      editedElementId = target.id;
-      elEditModal.showModal();
-      const foundElement = localData.find((el) => el.id == target.id);
-      elEditedForm.name.value = foundElement.name;
-      elEditedForm.description.value = foundElement.description;
+        elModal.showModal();
     } else {
-      window.location.href = "../pages/login.html";
-      alert("Ro'yhatdan o'tishingiz kerak");
+        createToast("error", "Ro'yhatdan o'tishingiz kerak!");
+        setTimeout(() => window.location.href = "/pages/register.html", 2000);
     }
-  }
-
-  // Get
-
-  if (target.classList.contains("js-info")) {
-  }
-
-  // Delete
-
-  if (target.classList.contains("js-delete")) {
-    if (checkAuth() && confirm("Rostdan o'chirmoqchimisiz")) {
-      deleteElement(target.id)
-        .then((id) => {
-          deleteElementLocal(id);
-        })
-        .catch(() => {})
-        .finally(() => {});
-    } else {
-      alert("Ro'yhatdan o'tishingiz kerak");
-      window.location.href = "../pages/login.html";
-    }
-  }
 });
 
-elEditedForm.addEventListener("submit", (evt) => {
-  evt.preventDefault();
-  const formData = new FormData(elEditedForm);
-  const result = {};
-  formData.forEach((value, key) => {
-    result[key] = value;
-  });
-  if (editedElementId) {
-    result.id = editedElementId;
-    editElement(result)
-      .then((res) => {
-        editElementLocal(res);
-      })
-      .catch(() => {})
-      .finally(() => {
-        editedElementId = null;
-        elEditModal.close();
-      });
-  }
+// Edit form
+document.addEventListener("DOMContentLoaded", () => {
+    elEditForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        elModal.close();
+
+        const fd = new FormData(elEditForm);
+        const generalValues = {};
+        const fuelConsumption = {};
+        const errors = [];
+
+        const fuelFields = ["city", "highway", "combined"];
+        const numberFields = { year: { min: 1700, max: 2025 }, doorCount: { min: 1, max: 20 }, seatCount: { min: 1, max: 20 }, horsepower: { min: 1 } };
+
+        for (let [name, value] of fd.entries()) {
+            value = value.trim();
+            if (value === "" || value.toLowerCase() === "undefined" || value.toLowerCase() === "null") {
+                errors.push(`${name} kiritilmagan yoki noto'g'ri`);
+                continue;
+            }
+            if (fuelFields.includes(name)) {
+                fuelConsumption[name] = value;
+                continue;
+            }
+            if (numberFields[name]) {
+                const num = Number(value);
+                if (!Number.isFinite(num)) { errors.push(`${name} raqam bo'lishi kerak`); continue; }
+                if (numberFields[name].min !== undefined && num < numberFields[name].min) { errors.push(`${name} minimal ${numberFields[name].min}`); continue; }
+                if (numberFields[name].max !== undefined && num > numberFields[name].max) { errors.push(`${name} maksimal ${numberFields[name].max}`); continue; }
+                generalValues[name] = num;
+                continue;
+            }
+            generalValues[name] = value;
+        }
+
+        if (errors.length) createToast("error", `${errors}`);
+
+        generalValues.fuelConsumption = fuelConsumption;
+
+        createToast("loading", "Qo'shilmoqda");
+        addElement(generalValues).then(res => res.json())
+        .finally(() => createToast("true", "Mashina oxirgi sahifaga qo'shildi"));
+
+        elEditForm.reset();
+    });
 });
 
-elPagination.addEventListener("click", (evt) => {
-  if (evt.target.classList.contains("js-page")) {
-    skip = evt.target.dataset.skip;
-    getAll(`?limit=${limit}&skip=${skip}`)
-      .then((res) => {
-        ui(res.data);
-        pagination(res.total, res.limit, res.skip);
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  }
+// Pagination click
+elPaginationWrapper.addEventListener("click", (evt) => {
+    if (evt.target.classList.contains("js-page")) {
+        skip = evt.target.dataset.skip;
+        elItemsContainer.innerHTML = "";
+        elLoader.classList.remove("hidden");
+        elLoader.classList.add("grid");
+
+        getAll(`?limit=${limit}&skip=${skip}`).then((res) => {
+            ui(res.data);
+            pagination(res.total, res.limit, res.skip);
+        }).catch((err) => alert(err.message))
+        .finally(() => {
+            elLoader.classList.add("hidden");
+            elLoader.classList.remove("grid");
+        });
+    }
 });

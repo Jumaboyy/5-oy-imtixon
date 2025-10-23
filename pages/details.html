@@ -1,27 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Details</title>
-  </head>
-  <body>
-    <a href="../index.html">Bosh sahifa</a>
-    <h1 id="name"></h1>
-    <p id="description"></p>
-    <p id="country"></p>
-    <p id="category"></p>
-    <p id="trim"></p>
-    <p id="generation"></p>
-    <p id="year"></p>
-    <p id="maxSpeed"></p>
-    <p id="horsepower"></p>
-    <p id="colorName"></p>
-    <p id="doorCount"></p>
-    <p id="seatCount"></p>
-    <p id="acceleration"></p>
-    <p id="engine"></p>
-    <p id="fuelType"></p>
-    <script src="../js/pages/details.js" type="module"></script>
-  </body>
+    <link rel="stylesheet" href="../css/output.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <div id="toast" class="tooast">
+        <ul id="toastContainer" class="toast-container">
+        </ul>
+    </div>
+
+    <div id="skeletoon" class="conttainer">
+        <div class="">
+            <a href="../index.html">Bosh sahifa</a>
+            <span class="dID">
+                <div class="skeleton h-6 w-2/3"></div>
+            </span>
+
+            <button class="btn btn-active btn-primary">Primary</button>
+        </div>
+        <div>
+            <span>
+                <div class="skeleton h-10 w-6"></div>
+            </span>
+            <span>trim: 
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>generation:
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>year:
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>color: 
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>color name:
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>category:
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>door count:
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>seat count: 
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>max speed:
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>acceleration: 
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>engine: 
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>horsepower: 
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>
+                <p id="fuelType"></p>
+            </span>
+
+            <span>
+              Fuel Consumption
+              <div class="fuelBlock">
+                  <p>City: 
+                <div class="skeleton h-7 w-2/3"></div></p>
+                  <p>Highway: 
+                <div class="skeleton h-7 w-2/3"></div></span></p>
+                  <p>Combined: 
+                <div class="skeleton h-7 w-2/3"></div></span></p>
+              </div>
+            </span>
+
+
+            <span>country: 
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+            <span>description: 
+                <div class="skeleton h-7 w-2/3"></div>
+            </span>
+        </div>
+    </div>
+    
+    <div id="asldet" class="conttainer hidden">
+        <div class="">
+            <a href="../index.html">Bosh sahifa</a>
+            <span class="dID">
+                ID: <p id="id"></p>
+            </span>
+            
+            <button id="editButton" class="btn btn-active btn-primary">
+                <svg class="pointer-events-none" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.1464 1.14645C12.3417 0.951184 12.6583 0.951184 12.8535 1.14645L14.8535 3.14645C15.0488 3.34171 15.0488 3.65829 14.8535 3.85355L10.9109 7.79618C10.8349 7.87218 10.7471 7.93543 10.651 7.9835L6.72359 9.94721C6.53109 10.0435 6.29861 10.0057 6.14643 9.85355C5.99425 9.70137 5.95652 9.46889 6.05277 9.27639L8.01648 5.34897C8.06455 5.25283 8.1278 5.16507 8.2038 5.08907L12.1464 1.14645ZM12.5 2.20711L8.91091 5.79618L7.87266 7.87267L8.12731 8.12732L10.2038 7.08907L13.7929 3.5L12.5 2.20711ZM9.99998 2L8.99998 3H4.9C4.47171 3 4.18056 3.00039 3.95552 3.01877C3.73631 3.03668 3.62421 3.06915 3.54601 3.10899C3.35785 3.20487 3.20487 3.35785 3.10899 3.54601C3.06915 3.62421 3.03669 3.73631 3.01878 3.95552C3.00039 4.18056 3 4.47171 3 4.9V11.1C3 11.5283 3.00039 11.8194 3.01878 12.0445C3.03669 12.2637 3.06915 12.3758 3.10899 12.454C3.20487 12.6422 3.35785 12.7951 3.54601 12.891C3.62421 12.9309 3.73631 12.9633 3.95552 12.9812C4.18056 12.9996 4.47171 13 4.9 13H11.1C11.5283 13 11.8194 12.9996 12.0445 12.9812C12.2637 12.9633 12.3758 12.9309 12.454 12.891C12.6422 12.7951 12.7951 12.6422 12.891 12.454C12.9309 12.3758 12.9633 12.2637 12.9812 12.0445C12.9996 11.8194 13 11.5283 13 11.1V6.99998L14 5.99998V11.1V11.1207C14 11.5231 14 11.8553 13.9779 12.1259C13.9549 12.407 13.9057 12.6653 13.782 12.908C13.5903 13.2843 13.2843 13.5903 12.908 13.782C12.6653 13.9057 12.407 13.9549 12.1259 13.9779C11.8553 14 11.5231 14 11.1207 14H11.1H4.9H4.87934C4.47686 14 4.14468 14 3.87409 13.9779C3.59304 13.9549 3.33469 13.9057 3.09202 13.782C2.7157 13.5903 2.40973 13.2843 2.21799 12.908C2.09434 12.6653 2.04506 12.407 2.0221 12.1259C1.99999 11.8553 1.99999 11.5231 2 11.1207V11.1206V11.1V4.9V4.87935V4.87932V4.87931C1.99999 4.47685 1.99999 4.14468 2.0221 3.87409C2.04506 3.59304 2.09434 3.33469 2.21799 3.09202C2.40973 2.71569 2.7157 2.40973 3.09202 2.21799C3.33469 2.09434 3.59304 2.04506 3.87409 2.0221C4.14468 1.99999 4.47685 1.99999 4.87932 2H4.87935H4.9H9.99998Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
+        <div>
+            <span>
+                <h1 id="name"></h1>
+            </span>
+            <span>trim: 
+                <p id="trim"></p>
+            </span>
+            <span>generation:
+                <p id="generation"></p>
+            </span>
+            <span>year:
+                <p id="year"></p>
+            </span>
+            <span>color: 
+                <p id="color"></p>
+            </span>
+            <span>color name:
+                <p id="colorName"></p>
+            </span>
+            <span>category:
+                <p id="category"></p>
+            </span>
+            <span>door count:
+                <p id="doorCount"></p>
+            </span>
+            <span>seat count: 
+                <p id="seatCount"></p>
+            </span>
+            <span>max speed:
+                <p id="maxSpeed"></p>
+            </span>
+            <span>acceleration: 
+                <p id="acceleration"></p>
+            </span>
+            <span>engine: 
+                <p id="engine"></p>
+            </span>
+            <span>horsepower: 
+                <p id="horsepower"></p>
+            </span>
+            <span>
+                <p id="fuelType"></p>
+            </span>
+
+            <span>
+              Fuel Consumption
+              <div class="fuelBlock">
+                  <p>City: <span id="city"></span></p>
+                  <p>Highway: <span id="highway"></span></p>
+                  <p>Combined: <span id="combined"></span></p>
+                </div>
+            </span>
+
+            
+            <span>country: 
+                <p id="country"></p>
+            </span>
+            <span>description: 
+                <p id="description"></p>
+            </span>
+        </div>
+
+    </div>
+
+    <dialog id="editModal" class="modal">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold" id="editedElementTitle"></h3>
+        <p class="py-4">Yangi mashina qo'shmoqdasiz</p>
+
+        <form id="editForm" method="dialog">
+          <input type="text" name="name" placeholder="Mashina nomi" class="input" />
+          <input type="text" name="trim" placeholder="Mashina qanday jihozlangan?" class="input" />
+          <input type="text" name="generation" placeholder="Generation" class="input" />
+          <input type="number" name="year" placeholder="Mashina yili" class="input" />
+          <input type="text" name="color" placeholder="Mashina rang kodi" class="input" />
+          <input type="text" name="colorName" placeholder="Rangining nomi" class="input" />
+          <input type="text" name="category" placeholder="Mashina kategoriyasi" class="input" />
+          <input type="number" name="doorCount" placeholder="Eshiklar soni" class="input" />
+          <input type="number" name="seatCount" placeholder="O'rindiqlar soni" class="input" />
+          <input type="text" name="maxSpeed" placeholder="Eng yuqori tezligi" class="input" />
+          <input type="text" name="acceleration" placeholder="Tezlanish 0/100km/h" class="input" />
+          <input type="text" name="engine" placeholder="Dvigatel" class="input" />
+          <input type="number" name="horsepower" placeholder="Ot kuchi" class="input" />
+          <input type="text" name="fuelType" placeholder="Yoqilg'i turi" class="input" />
+          <span>Yoqilg'i sarfi:</span>
+          <input type="text" name="city" placeholder="Shahar ichida" class="input" />
+          <input type="text" name="highway" placeholder="Avtomagistralda" class="input" />
+          <input type="text" name="combined" placeholder="Aralash" class="input" />
+          <input type="text" name="country" placeholder="Davlati" class="input" />
+          <textarea class="textarea" name="description" placeholder="Qisqacha izoh"></textarea>
+    
+          <button class="btn btn-active" type="submit">Tasdiqlash</button>
+        </form>
+
+        <div class="modal-action">
+          <button class="btn" onclick="editModal.close()">Yopish</button>
+        </div>
+      </div>
+    </dialog>
+
+
+
+    <script type="module" src="../js/pages/details.js"></script>
+</body>
 </html>
